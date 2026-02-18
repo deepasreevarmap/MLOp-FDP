@@ -1,5 +1,6 @@
 name: Iris ML CI Pipeline
 
+# Trigger workflow when code is pushed to main branch
 on:
   push:
     branches: [ main ]
@@ -11,35 +12,52 @@ jobs:
 
     steps:
 
+    # STEP 1 — Checkout repository code
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # STEP 2 — Set up Python environment
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
+    # STEP 3 — Display Python version
+    - name: Show Python version
+      run: python --version
+
+    # STEP 4 — Install project dependencies
     - name: Install dependencies
       run: |
-        pip install -r requirement.txt
+        pip install --upgrade pip
+        pip install -r requirements.txt
 
-    - name: Run training
+    # STEP 5 — Show project files (debugging step)
+    - name: List project files
+      run: ls -R
+
+    # STEP 6 — Run training script
+    - name: Run training script
       run: |
         python train.py
 
+    # STEP 7 — Verify model was created
     - name: Verify model exists
       run: |
         if [ ! -f model.pkl ]; then
-          echo "Model not created"
+          echo "❌ Model file not found"
           exit 1
+        else
+          echo "✅ Model file created successfully"
         fi
 
-    - name: Pipeline complete
-      run: echo "CI pipeline finished successfully"
-
-
-     - name: Upload model artifact
+    # STEP 8 — Upload trained model as artifact
+    - name: Upload model artifact
       uses: actions/upload-artifact@v4
       with:
         name: trained-model
         path: model.pkl
+
+    # STEP 9 — Success message
+    - name: Pipeline completed
+      run: echo "🎉 CI pipeline completed successfully"
