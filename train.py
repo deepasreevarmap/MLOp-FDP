@@ -29,7 +29,7 @@ with mlflow.start_run():
     mlflow.log_param("max_iter", 300)
 
     # --- TRAIN MODEL ---
-    model = LogisticRegression(max_iter=3)
+    model = LogisticRegression(max_iter=300)
     model.fit(X_train, y_train)
 
     # --- LOG METRICS (The results) ---
